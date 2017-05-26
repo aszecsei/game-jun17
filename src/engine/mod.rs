@@ -41,6 +41,10 @@ impl Game {
             self.screen.draw();
         }
     }
+
+    pub fn set_screen(&mut self, new_screen: graphics::screen::Screen) {
+        self.screen = new_screen;
+    }
 }
 
 pub fn new(title:&str) -> Game {
