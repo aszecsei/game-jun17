@@ -38,7 +38,7 @@ impl Game {
                 }
             }
             self.screen.update();
-            self.screen.draw(&self.renderer);
+            self.screen.draw();
         }
     }
 
