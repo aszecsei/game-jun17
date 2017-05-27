@@ -19,7 +19,9 @@ pub mod screen {
                 component.update();
             }
         }
-        pub fn draw(&self) {
+        pub fn draw(&self, renderer: &mut sdl2::render::WindowCanvas) {
+            let _ = renderer.clear();
+
             for component in self.components.iter() {
                 component.draw();
             }

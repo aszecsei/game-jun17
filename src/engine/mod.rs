@@ -10,12 +10,13 @@ use std::path::Path;
 
 pub mod input;
 pub mod graphics;
+pub mod math;
 
 pub struct Game<'t> {
     pub renderer: sdl2::render::WindowCanvas,
     pub events: sdl2::EventPump,
     pub screen: graphics::screen::Screen,
-    textures: HashMap<&'static str, Texture<'t>>
+    textures: HashMap<&'t str, Texture<'t>>
 }
 
 impl<'t> Game<'t> {
@@ -44,7 +45,7 @@ impl<'t> Game<'t> {
                 }
             }
             self.screen.update();
-            self.screen.draw();
+            self.screen.draw(&mut self.renderer);
         }
     }
 
@@ -52,7 +53,7 @@ impl<'t> Game<'t> {
         self.screen = new_screen;
     }
 
-    pub fn load_texture(&mut self, texture_creator: &'t mut TextureCreator<sdl2::video::WindowContext>, name: &'static str, path: &'static str) {
+    pub fn load_texture(&mut self, texture_creator: &'t mut TextureCreator<sdl2::video::WindowContext>, name: &'t str, path: &'t str) {
         // Load a surface.
         // Surfaces live in system RAM, so they aren't ideal for performance.
         let surface = match Surface::load_bmp(&Path::new(path)) {
@@ -68,6 +69,17 @@ impl<'t> Game<'t> {
         };
 
         self.textures.insert(name, texture);
+    }
+
+    pub fn draw_texture(&mut self, name: &'t str, src: Option<math::Rect>, dst: Option<math::Rect>) {
+        // Display the texture.
+        // Omitting the src & dst Rect arguments will cause our image to stretch across the entire buffer.
+        // Try passing Some(surface.rect()) for src & dst instead of None & see how things change.
+        let texture = &self.textures[name];
+        let srcSDL = src.map(|s| sdl2::rect::Rect::new(s.x(), s.y(), s.width(), s.height()));
+        let dstSDL = dst.map(|s| sdl2::rect::Rect::new(s.x(), s.y(), s.width(), s.height()));
+        let _ = self.renderer.copy(&texture, srcSDL, dstSDL);
+        let _ = self.renderer.present();
     }
 }
 
