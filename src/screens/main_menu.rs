@@ -1,7 +1,7 @@
-use engine::graphics::screen;
+use engine::graphics;
 
-pub fn new() -> screen::Screen {
-    let result = screen::new();
+pub fn new() -> graphics::Screen {
+    let result = graphics::Screen::new();
 
     // TODO: Add content
 
