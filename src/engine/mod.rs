@@ -52,7 +52,7 @@ impl<'t> Game<'t> {
         self.screen = new_screen;
     }
 
-    pub fn load_texture(&mut self, texture_creator: &mut TextureCreator<sdl2::video::WindowContext>, name: &'static str, path: &'static str) -> Texture {
+    pub fn load_texture(&mut self, texture_creator: &'t mut TextureCreator<sdl2::video::WindowContext>, name: &'static str, path: &'static str) {
         // Load a surface.
         // Surfaces live in system RAM, so they aren't ideal for performance.
         let surface = match Surface::load_bmp(&Path::new(path)) {
@@ -68,7 +68,6 @@ impl<'t> Game<'t> {
         };
 
         self.textures.insert(name, texture);
-        return texture;
     }
 }
 
