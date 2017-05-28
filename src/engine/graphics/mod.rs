@@ -9,11 +9,12 @@ pub struct Screen {
 }
 
 impl Screen {
-    pub fn update(&mut self) {
+    pub fn update(&mut self, delta_time: f64) {
         for obj in self.objects.iter_mut() {
-            obj.update();
+            obj.update(delta_time);
         }
     }
+
     pub fn draw(&self, renderer: &mut renderer::Renderer) {
         let _ = renderer.window.clear();
 

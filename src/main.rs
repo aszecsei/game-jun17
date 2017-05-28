@@ -1,4 +1,5 @@
 extern crate sdl2;
+extern crate time;
 
 mod engine;
 mod screens;
@@ -13,7 +14,7 @@ fn main() {
     texture_creator = game.renderer.window.texture_creator();
     // Load all textures here
     // Using game.load_texture()
-    game.renderer.load_texture(&mut texture_creator, "owo", "res/owo.png");
+    game.renderer.load_texture(&mut texture_creator, "owo", "res/ice-troll.bmp");
 
     // Add your initial screen to the game
     game.set_screen(screens::main_menu::new());

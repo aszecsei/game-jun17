@@ -1,4 +1,6 @@
 extern crate sdl2;
+extern crate time;
+use std::time::Instant;
 
 use sdl2::event::{Event,WindowEvent};
 use sdl2::keyboard::Keycode;
@@ -10,12 +12,14 @@ pub mod math;
 pub struct Game<'t> {
     pub events: sdl2::EventPump,
     pub screen: graphics::Screen,
-    pub renderer: graphics::renderer::Renderer<'t>
+    pub renderer: graphics::renderer::Renderer<'t>,
+    pub delta_time: f64
 }
 
 impl<'t> Game<'t> {
     pub fn start(&mut self) {
         // loop until we receive a QuitEvent
+        let old_time = Instant::now();
         'event : loop {
             // poll_event returns the most recent event or NoEvent if nothing has happened
             for event in self.events.poll_iter() {
@@ -38,7 +42,11 @@ impl<'t> Game<'t> {
                     _               => continue
                 }
             }
-            self.screen.update();
+            let elapsed = old_time.elapsed();
+            let old_time = Instant::now();
+            // TODO: Improve this? Unsure how as of yet.
+            self.delta_time = elapsed.as_secs() as f64 + (elapsed.subsec_nanos() as f64) / 1000_000_000.0;
+            self.screen.update(self.delta_time);
             self.screen.draw(&mut self.renderer);
         }
     }
@@ -76,14 +84,14 @@ pub fn new(title:&str) -> Game {
     let events = ctx.event_pump().unwrap();
 
     return Game {
-
         events: events,
         screen: graphics::Screen { objects: Vec::new() },
-        renderer: graphics::renderer::Renderer::new(renderer)
+        renderer: graphics::renderer::Renderer::new(renderer),
+        delta_time: 0.0
     };
 }
 
 pub trait GameObject {
-    fn update(&mut self);
+    fn update(&mut self, delta_time: f64);
     fn draw(&self, &mut graphics::renderer::Renderer);
 }
