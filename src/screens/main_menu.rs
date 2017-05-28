@@ -14,12 +14,21 @@ pub fn new() -> graphics::Screen {
 
 pub struct Image {
     pos: math::Vector2,
-    size: math::Vector2
+    size: math::Vector2,
+    vel: math::Vector2,
 }
 
 impl GameObject for Image {
     fn update(&mut self, delta_time: f64) {
-        self.pos = math::Vector2::new(self.pos.x() + 0.01 * delta_time as f32, self.pos.y() + 0.01 * delta_time as f32);
+        self.pos = math::Vector2::new(self.pos.x() + self.vel.x() * delta_time as f32, self.pos.y() + self.vel.y() * delta_time as f32);
+        if self.pos.x() < 0.0 || self.pos.x() + self.size.x() > 1920.0 {
+            let old_x = self.vel.x();
+            self.vel.set_x(-1.0 * old_x);
+        }
+        if self.pos.y() < 0.0 || self.pos.y() + self.size.y() > 1200.0 {
+            let old_y = self.vel.y();
+            self.vel.set_y(-1.0 * old_y);
+        }
     }
 
     fn draw(&self, renderer: &mut graphics::renderer::Renderer) {
@@ -31,7 +40,8 @@ impl Image {
     pub fn new() -> Image {
         Image {
             pos: math::Vector2::new(0.0, 0.0),
-            size: math::Vector2::new(300.0, 200.0)
+            size: math::Vector2::new(300.0, 200.0),
+            vel: math::Vector2::new(0.1, 0.1),
         }
     }
 }
