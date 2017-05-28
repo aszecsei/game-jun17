@@ -44,9 +44,9 @@ impl<'t> Renderer<'t> {
         // Omitting the src & dst Rect arguments will cause our image to stretch across the entire buffer.
         // Try passing Some(surface.rect()) for src & dst instead of None & see how things change.
         let texture = &self.textures[name];
-        let srcSDL = src.map(|s| sdl2::rect::Rect::new(s.x(), s.y(), s.width(), s.height()));
-        let dstSDL = dst.map(|s| sdl2::rect::Rect::new(s.x(), s.y(), s.width(), s.height()));
-        let _ = self.window.copy(&texture, srcSDL, dstSDL);
+        let src_sdl = src.map(|s| sdl2::rect::Rect::new(s.x(), s.y(), s.width(), s.height()));
+        let dst_sdl = dst.map(|s| sdl2::rect::Rect::new(s.x(), s.y(), s.width(), s.height()));
+        let _ = self.window.copy(&texture, src_sdl, dst_sdl);
         let _ = self.window.present();
     }
 }
