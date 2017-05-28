@@ -1,6 +1,7 @@
 extern crate sdl2;
 extern crate time;
 use std::time::Instant;
+use std::cmp::max;
 
 use sdl2::event::{Event,WindowEvent};
 use sdl2::keyboard::Keycode;
@@ -13,13 +14,19 @@ pub struct Game<'t> {
     pub events: sdl2::EventPump,
     pub screen: graphics::Screen,
     pub renderer: graphics::renderer::Renderer<'t>,
-    pub delta_time: f64
+    pub delta_time: f64,
+    timer_subsystem: sdl2::TimerSubsystem,
+    pub screen_width: u32,
+    pub screen_height: u32
 }
 
 impl<'t> Game<'t> {
     pub fn start(&mut self) {
         // loop until we receive a QuitEvent
-        let old_time = Instant::now();
+        // loop until we receive a QuitEvent
+        let mut last_time: u32;
+        let mut current_time = self.timer_subsystem.ticks();
+        let target_frame_time: u32 = 1000/100; // 100fps = 10ms
         'event : loop {
             // poll_event returns the most recent event or NoEvent if nothing has happened
             for event in self.events.poll_iter() {
@@ -42,12 +49,14 @@ impl<'t> Game<'t> {
                     _               => continue
                 }
             }
-            let elapsed = old_time.elapsed();
-            let old_time = Instant::now();
-            // TODO: Improve this? Unsure how as of yet.
-            self.delta_time = elapsed.as_secs() as f64 + (elapsed.subsec_nanos() as f64) / 1000_000_000.0;
+            last_time = current_time;
+            current_time = self.timer_subsystem.ticks();
+            self.delta_time = current_time as f64 - last_time as f64;
             self.screen.update(self.delta_time);
             self.screen.draw(&mut self.renderer);
+             //not sleeping for the whole time gives a smoother result
+            let sleep_time = max(0, target_frame_time as i32 - (current_time as i32 - last_time as i32));
+            self.timer_subsystem.delay(sleep_time as u32 / 2);
         }
     }
 
@@ -82,12 +91,16 @@ pub fn new(title:&str) -> Game {
     };
 
     let events = ctx.event_pump().unwrap();
+    let timer = ctx.timer().unwrap();
 
     return Game {
         events: events,
         screen: graphics::Screen { objects: Vec::new() },
         renderer: graphics::renderer::Renderer::new(renderer),
-        delta_time: 0.0
+        delta_time: 0.0,
+        timer_subsystem: timer,
+        screen_width: disp.w as u32,
+        screen_height: disp.h as u32
     };
 }
 
