@@ -78,7 +78,12 @@ pub fn new(title:&str) -> Game {
     return Game {
 
         events: events,
-        screen: graphics::Screen { components: Vec::new() },
+        screen: graphics::Screen { objects: Vec::new() },
         renderer: graphics::renderer::Renderer::new(renderer)
     };
+}
+
+pub trait GameObject {
+    fn update(&mut self);
+    fn draw(&self, &mut graphics::renderer::Renderer);
 }

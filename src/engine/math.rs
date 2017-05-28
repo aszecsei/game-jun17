@@ -17,6 +17,14 @@ pub struct Vector3 {
 
 impl Vector3 {
     // TODO: Operators
+
+    pub fn new(x: f32, y: f32, z: f32) -> Vector3 {
+        Vector3 {
+            x: x,
+            y: y,
+            z: z
+        }
+    }
 }
 
 pub struct Point {

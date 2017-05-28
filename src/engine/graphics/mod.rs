@@ -2,38 +2,29 @@ extern crate sdl2;
 
 pub mod renderer;
 
-pub trait Drawable {
-    fn draw(&self, &mut renderer::Renderer);
-}
-
-pub trait Updatable {
-    fn update(&mut self);
-}
-
-pub trait Component: Drawable + Updatable {
-}
+use engine::GameObject;
 
 pub struct Screen {
-    pub components: Vec<Box<Component>>,
+    pub objects: Vec<Box<GameObject>>,
 }
 
 impl Screen {
     pub fn update(&mut self) {
-        for component in self.components.iter_mut() {
-            component.update();
+        for obj in self.objects.iter_mut() {
+            obj.update();
         }
     }
     pub fn draw(&self, renderer: &mut renderer::Renderer) {
         let _ = renderer.window.clear();
 
-        for component in self.components.iter() {
-            component.draw(renderer);
+        for obj in self.objects.iter() {
+            obj.draw(renderer);
         }
     }
 
     pub fn new() -> Screen {
         Screen {
-            components: Vec::new()
+            objects: Vec::new()
         }
     }
 }
